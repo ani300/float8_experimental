@@ -397,6 +397,7 @@ class Float8SWLinear(torch.nn.Linear):
         self.w_f8 = None
         self.w_inv_s = None
         self.biasfp16 = None
+        self.a_inv_s = None
         self.finfo = torch.finfo(torch.float8_e4m3fn)
 
     @classmethod
@@ -420,6 +421,7 @@ class Float8SWLinear(torch.nn.Linear):
         w_f8, w_inv_s = new_mod.to_float8(mod.weight)
         new_mod.w_f8 = w_f8.t()
         new_mod.w_inv_s = w_inv_s
+        new_mod.a_inv_s = torch.ones_like(w_inv_s)
         # Release fp16 memory
         del new_mod.weight
 
@@ -450,7 +452,7 @@ class Float8SWLinear(torch.nn.Linear):
       # perform the float8 matmul
       ishape= list(x_f8.shape)
       x_f8_mat = x_f8.view(-1,ishape[-1])
-      y, _ = torch._scaled_mm(x_f8_mat, self.w_f8, out_dtype=torch.bfloat16,
-                             scale_b=self.w_inv_s, bias=self.biasfp16, use_fast_accum=False)#, scale_a=x_inv_s)
+      y = torch._scaled_mm(x_f8_mat, self.w_f8, self.a_inv_s, self.w_inv_s, 
+                              out_dtype=torch.float16, bias=self.biasfp16, use_fast_accum=False)
       y = y.view(ishape[0],ishape[1],-1)
       return y
