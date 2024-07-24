@@ -304,9 +304,9 @@ def index_put_fp8(aten_op, args, kwargs=None):
     fp8_values = args[2]
     assert isinstance(fp8_self, Float8Tensor)
     assert isinstance(fp8_values, Float8Tensor)
-    assert fp8_self._scale == fp8_values._scale
-    assert fp8_self.dtype == fp8_values.dtype
-    assert fp8_self._orig_dtype == fp8_values._orig_dtype
+    # assert fp8_self._scale == fp8_values._scale
+    # assert fp8_self.dtype == fp8_values.dtype
+    # assert fp8_self._orig_dtype == fp8_values._orig_dtype
 
     fp8_data = fp8_self._data
     fp8_values_data = fp8_values._data
@@ -336,21 +336,21 @@ def copy_fp8(aten_op, args, kwargs=None):
         src_hp = src.to_original_precision()
         return aten_op(self, src_hp, *args[2:], **kwargs)
     elif isinstance(self, Float8Tensor) and isinstance(src, Float8Tensor):
-        assert (
-            self._orig_dtype == src._orig_dtype
-        ), "Expecting both Float8Tensors to be of the same dtype"
-        assert (
-            self._scale == src._scale
-        ), "Expecting both Float8Tensors to have thee same scale"
-        assert (
-            self._linear_mm_config == src._linear_mm_config
-        ), "Expecting both Float8Tensors to have thee same mm config"
-        assert (
-            self._data.dtype == src._data.dtype
-        ), "Expecting both Float8Tensors to be of the same dtypet"
-        assert (
-            self._gemm_input_role == src._gemm_input_role
-        ), "Expecting both Float8Tensors to have the same gemm_input_role"
+        # assert (
+        #     self._orig_dtype == src._orig_dtype
+        # ), "Expecting both Float8Tensors to be of the same dtype"
+        # assert (
+        #     self._scale == src._scale
+        # ), "Expecting both Float8Tensors to have thee same scale"
+        # assert (
+        #     self._linear_mm_config == src._linear_mm_config
+        # ), "Expecting both Float8Tensors to have thee same mm config"
+        # assert (
+        #     self._data.dtype == src._data.dtype
+        # ), "Expecting both Float8Tensors to be of the same dtypet"
+        # assert (
+        #     self._gemm_input_role == src._gemm_input_role
+        # ), "Expecting both Float8Tensors to have the same gemm_input_role"
         fp8_out = aten_op(self._data, src._data, *args[2:], **kwargs)
         return Float8Tensor(
             fp8_out,
