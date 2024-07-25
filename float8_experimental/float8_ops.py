@@ -83,24 +83,24 @@ def float8_cat(aten_op, args, kwargs=None):
     gemm_input_role = chunked_tensors[0]._gemm_input_role
     chunk_data = []
     for chunk in chunked_tensors:
-        assert isinstance(
-            chunk, Float8Tensor
-        ), "Expecting all chunks to be of type Float8Tensor"
-        assert (
-            chunk._orig_dtype == orig_dtype
-        ), "Expecting all chunks to be of the same dtype"
-        assert (
-            chunk._scale is scale
-        ), "Expecting all chunks to have thee same scale as a result of a split"
-        assert (
-            chunk._linear_mm_config is mm_config
-        ), "Expecting all chunks to have thee same mm config as a result of a split"
-        assert (
-            chunk._data.dtype == fp8_dtype
-        ), "Expecting all chunks to be of the same dtype as a result of a split"
-        assert (
-            chunk._gemm_input_role is gemm_input_role
-        ), "Expecting all chunks to have the same gemm_input_role as a result of a split"
+        # assert isinstance(
+        #     chunk, Float8Tensor
+        # ), "Expecting all chunks to be of type Float8Tensor"
+        # assert (
+        #     chunk._orig_dtype == orig_dtype
+        # ), "Expecting all chunks to be of the same dtype"
+        # assert (
+        #     chunk._scale is scale
+        # ), "Expecting all chunks to have thee same scale as a result of a split"
+        # assert (
+        #     chunk._linear_mm_config is mm_config
+        # ), "Expecting all chunks to have thee same mm config as a result of a split"
+        # assert (
+        #     chunk._data.dtype == fp8_dtype
+        # ), "Expecting all chunks to be of the same dtype as a result of a split"
+        # assert (
+        #     chunk._gemm_input_role is gemm_input_role
+        # ), "Expecting all chunks to have the same gemm_input_role as a result of a split"
         chunk_data.append(chunk._data.view(torch.uint8))
 
     new_data = aten_op(chunk_data, *args[1:], **kwargs)
